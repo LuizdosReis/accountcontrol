@@ -4,6 +4,7 @@ import br.com.accountcontrol.api.AbstractRestControllerTest;
 import br.com.accountcontrol.category.Category;
 import br.com.accountcontrol.category.CategoryService;
 import br.com.accountcontrol.category.builder.CategoryBuilder;
+import br.com.accountcontrol.handler.RestExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,11 +36,13 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
     public void setUp(){
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(endpoint).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(endpoint)
+                                 .setControllerAdvice(new RestExceptionHandler())
+                                 .build();
     }
 
     @Test
-    public void saveCategoryShouldReturnStatusCode201() throws Exception {
+    public void saveCategoryShouldReturnStatusCodeCreated() throws Exception {
         Category category = CategoryBuilder.buildCategoryWithoutId();
         Category categoryReturned = CategoryBuilder.buildCategoryWithId();
 
@@ -47,6 +52,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(asJsonString(category))
                 )
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.description", equalTo(categoryReturned.getDescription())))
                 .andExpect(jsonPath("$.type", equalTo(categoryReturned.getType().name())))
@@ -54,15 +60,19 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
     }
 
     @Test
-    public void saveInvalidCategoryShouldReturnStatusCode201() throws Exception {
-        Category category = CategoryBuilder.buildCategoryWithoutId();
-        category.setDescription("");
+    public void saveInvalidCategoryShouldReturnStatusCodeBadRequest() throws Exception {
+        Category category = Category.builder().build();
 
         mockMvc.perform(post(CategoryEndpoint.BASE_URL)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(asJsonString(category))
                 )
-                .andExpect(status().isBadRequest());
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title", equalTo("Field Validation Errors")))
+                .andExpect(jsonPath("$.detail", equalTo("Field Validation Errors")))
+                .andExpect(jsonPath("$.developerMessage",equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
+                .andExpect(jsonPath("$.fieldErrors",hasSize(2)));
     }
 
 
