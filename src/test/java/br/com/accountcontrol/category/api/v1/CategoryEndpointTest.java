@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,7 +73,16 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
                 .andExpect(jsonPath("$.title", equalTo("Field Validation Errors")))
                 .andExpect(jsonPath("$.detail", equalTo("Field Validation Errors")))
                 .andExpect(jsonPath("$.developerMessage",equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
-                .andExpect(jsonPath("$.fieldErrors",hasSize(2)));
+                .andExpect(jsonPath("$.date",notNullValue()))
+                .andExpect(jsonPath("$.fieldErrors",hasSize(2)))
+                .andExpect(jsonPath("$.fieldErrors[0].field",equalTo("description")))
+                .andExpect(jsonPath("$.fieldErrors[0].message",equalTo("The description not be empty")))
+                .andExpect(jsonPath("$.fieldErrors[0].code",equalTo("NotEmpty")))
+                .andExpect(jsonPath("$.fieldErrors[0].rejectedValue",equalTo(null)))
+                .andExpect(jsonPath("$.fieldErrors[1].field",equalTo("type")))
+                .andExpect(jsonPath("$.fieldErrors[1].message",equalTo("The Type not be empty")))
+                .andExpect(jsonPath("$.fieldErrors[1].code",equalTo("NotNull")))
+                .andExpect(jsonPath("$.fieldErrors[1].rejectedValue",equalTo(null)));
     }
 
 

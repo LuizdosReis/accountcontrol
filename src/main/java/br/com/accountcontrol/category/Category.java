@@ -25,7 +25,7 @@ public class Category implements Serializable{
     @NotEmpty(message = "The description not be empty")
     private String description;
 
-    @NotNull(message = "Type not be empty")
+    @NotNull(message = "The Type not be empty")
     @Enumerated(value = EnumType.STRING)
     private Type type;
 
