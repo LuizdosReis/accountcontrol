@@ -10,18 +10,24 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
+import java.util.Collections;
+
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class CategoryEndpointTest extends AbstractRestControllerTest{
 
@@ -39,6 +45,11 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
 
         mockMvc = MockMvcBuilders.standaloneSetup(endpoint)
                                  .setControllerAdvice(new RestExceptionHandler())
+                                 .setCustomArgumentResolvers(
+                                        new PageableHandlerMethodArgumentResolver(
+                                                new SortHandlerMethodArgumentResolver()
+                                        )
+                                 )
                                  .build();
     }
 
@@ -75,15 +86,29 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
                 .andExpect(jsonPath("$.developerMessage",equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
                 .andExpect(jsonPath("$.date",notNullValue()))
                 .andExpect(jsonPath("$.fieldErrors",hasSize(2)))
-                .andExpect(jsonPath("$.fieldErrors[0].field",equalTo("description")))
-                .andExpect(jsonPath("$.fieldErrors[0].message",equalTo("The description not be empty")))
-                .andExpect(jsonPath("$.fieldErrors[0].code",equalTo("NotEmpty")))
-                .andExpect(jsonPath("$.fieldErrors[0].rejectedValue",equalTo(null)))
-                .andExpect(jsonPath("$.fieldErrors[1].field",equalTo("type")))
-                .andExpect(jsonPath("$.fieldErrors[1].message",equalTo("The Type not be empty")))
-                .andExpect(jsonPath("$.fieldErrors[1].code",equalTo("NotNull")))
-                .andExpect(jsonPath("$.fieldErrors[1].rejectedValue",equalTo(null)));
+                .andExpect(jsonPath("$.fieldErrors[*].field",containsInAnyOrder(
+                        "description","type")))
+                .andExpect(jsonPath("$.fieldErrors[*].message",containsInAnyOrder(
+                        "The description not be empty","The Type not be empty")))
+                .andExpect(jsonPath("$.fieldErrors[*].code",containsInAnyOrder(
+                        "NotEmpty","NotNull")));
     }
 
+    @Test
+    public void findAllCategoryShouldReturnStatusCodeOk() throws Exception {
 
+        Category categoryReturned = CategoryBuilder.buildCategoryWithId();
+
+        when(service.findAll(PageRequest.of(0,20)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(categoryReturned)));
+
+        mockMvc.perform(get(CategoryEndpoint.BASE_URL))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content",hasSize(1)))
+                .andExpect(jsonPath("$.totalElements",is(1)))
+                .andExpect(jsonPath("$.content[0].id",is(1)))
+                .andExpect(jsonPath("$.content[0].description",is("Car")))
+                .andExpect(jsonPath("$.content[0].type",is("OUT")));
+    }
 }

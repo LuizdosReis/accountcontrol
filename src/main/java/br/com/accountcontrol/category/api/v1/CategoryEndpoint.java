@@ -3,6 +3,8 @@ package br.com.accountcontrol.category.api.v1;
 import br.com.accountcontrol.category.Category;
 import br.com.accountcontrol.category.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,5 +23,11 @@ public class CategoryEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public Category save(@Valid @RequestBody Category category){
         return service.save(category);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Page<Category> getAll(Pageable pageable){
+        return service.findAll(pageable);
     }
 }
