@@ -66,9 +66,9 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.description", equalTo(categoryReturned.getDescription())))
-                .andExpect(jsonPath("$.type", equalTo(categoryReturned.getType().name())))
-                .andExpect(jsonPath("$.id",equalTo(categoryReturned.getId().intValue())));
+                .andExpect(jsonPath("$.description", is(categoryReturned.getDescription())))
+                .andExpect(jsonPath("$.type", is(categoryReturned.getType().name())))
+                .andExpect(jsonPath("$.id",is(categoryReturned.getId().intValue())));
     }
 
     @Test
