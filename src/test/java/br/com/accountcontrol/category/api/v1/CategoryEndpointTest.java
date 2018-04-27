@@ -4,6 +4,8 @@ import br.com.accountcontrol.api.AbstractRestControllerTest;
 import br.com.accountcontrol.category.Category;
 import br.com.accountcontrol.category.CategoryService;
 import br.com.accountcontrol.category.builder.CategoryBuilder;
+import br.com.accountcontrol.category.dto.CategoryCreateDTO;
+import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import br.com.accountcontrol.handler.RestExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,29 +58,27 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
 
     @Test
     public void saveCategoryShouldReturnStatusCodeCreated() throws Exception {
-        Category category = CategoryBuilder.buildCategoryWithoutId();
-        Category categoryReturned = CategoryBuilder.buildCategoryWithId();
+        CategoryCreateDTO categoryCreate = CategoryBuilder.CATEGORY_CREATE_DTO;
+        Category categoryReturned = CategoryBuilder.CATEGORY;
 
-        when(service.save(category)).thenReturn(categoryReturned);
+        when(service.save(categoryCreate)).thenReturn(categoryReturned);
 
         mockMvc.perform(post(CategoryEndpoint.BASE_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(category))
+                    .content(asJsonString(categoryCreate))
                 )
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.description", is(categoryReturned.getDescription())))
-                .andExpect(jsonPath("$.type", is(categoryReturned.getType().name())))
-                .andExpect(jsonPath("$.id",is(categoryReturned.getId().intValue())));
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.description", is(categoryReturned.getDescription())))
+            .andExpect(jsonPath("$.type", is(categoryReturned.getType().name())))
+            .andExpect(jsonPath("$.id",is(categoryReturned.getId().intValue())));
     }
 
     @Test
     public void saveInvalidCategoryShouldReturnStatusCodeBadRequest() throws Exception {
-        Category category = Category.builder().build();
-
         mockMvc.perform(post(CategoryEndpoint.BASE_URL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(category))
+                    .content(asJsonString(CategoryCreateDTO.builder().build()))
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -97,7 +98,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
     @Test
     public void findAllCategoryShouldReturnStatusCodeOk() throws Exception {
 
-        Category categoryReturned = CategoryBuilder.buildCategoryWithId();
+        Category categoryReturned = CategoryBuilder.CATEGORY;
 
         when(service.findAll(PageRequest.of(0,20)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(categoryReturned)));
@@ -110,5 +111,24 @@ public class CategoryEndpointTest extends AbstractRestControllerTest{
                 .andExpect(jsonPath("$.content[0].id",is(1)))
                 .andExpect(jsonPath("$.content[0].description",is("Car")))
                 .andExpect(jsonPath("$.content[0].type",is("OUT")));
+    }
+
+    @Test
+    public void updateCategoryShouldReturnStatusCodeOk() throws Exception {
+
+        CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
+        Category category = CategoryBuilder.CATEGORY;
+
+        when(service.update(categoryUpdate)).thenReturn(category);
+
+        mockMvc.perform(put(CategoryEndpoint.BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(categoryUpdate))
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id",is(category.getId().intValue())))
+            .andExpect(jsonPath("$.description",is("Car")))
+            .andExpect(jsonPath("$.type",is("OUT")));
     }
 }

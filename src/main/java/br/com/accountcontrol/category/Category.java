@@ -14,18 +14,15 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @EqualsAndHashCode(of = "id")
-@ToString(of = "id")
 @Data
 public class Category implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
-    @NotEmpty(message = "The description not be empty")
     private String description;
 
-    @NotNull(message = "The Type not be empty")
     @Enumerated(value = EnumType.STRING)
     private Type type;
 

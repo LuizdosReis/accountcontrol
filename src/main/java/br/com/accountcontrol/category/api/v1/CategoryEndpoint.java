@@ -2,6 +2,8 @@ package br.com.accountcontrol.category.api.v1;
 
 import br.com.accountcontrol.category.Category;
 import br.com.accountcontrol.category.CategoryService;
+import br.com.accountcontrol.category.dto.CategoryCreateDTO;
+import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +23,7 @@ public class CategoryEndpoint {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Category save(@Valid @RequestBody Category category){
+    public Category save(@Valid @RequestBody CategoryCreateDTO category){
         return service.save(category);
     }
 
@@ -29,5 +31,11 @@ public class CategoryEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public Page<Category> getAll(Pageable pageable){
         return service.findAll(pageable);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Category update(@Valid @RequestBody CategoryUpdateDTO category){
+        return service.update(category);
     }
 }

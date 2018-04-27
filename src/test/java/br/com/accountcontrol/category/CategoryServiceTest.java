@@ -1,10 +1,12 @@
 package br.com.accountcontrol.category;
 
 import br.com.accountcontrol.category.builder.CategoryBuilder;
+import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,17 +29,18 @@ public class CategoryServiceTest {
     public void setUp(){
         MockitoAnnotations.initMocks(this);
 
-        service = new CategoryServiceImpl(repository);
+        service = new CategoryServiceImpl(repository,new ModelMapper());
     }
 
     @Test
     public void save(){
-        Category categorySaved = CategoryBuilder.buildCategoryWithoutId();
-        Category categoryReturned = CategoryBuilder.buildCategoryWithId();
+        Category categoryReturned = CategoryBuilder.CATEGORY;
+        Category categorySaved = CategoryBuilder.CATEGORY_WITHOUT_ID;
+        CategoryCreateDTO categoryCreate = CategoryBuilder.CATEGORY_CREATE_DTO;
 
         when(repository.save(categorySaved)).thenReturn(categoryReturned);
 
-        Category category = service.save(categorySaved);
+        Category category = service.save(categoryCreate);
 
         assertEquals(categoryReturned.getId(),category.getId());
         assertEquals(categoryReturned.getDescription(),category.getDescription());
@@ -46,7 +49,7 @@ public class CategoryServiceTest {
 
     @Test
     public void getAll(){
-        Category categoryReturned = CategoryBuilder.buildCategoryWithId();
+        Category categoryReturned = CategoryBuilder.CATEGORY;
 
         PageRequest pageRequest = PageRequest.of(0, 20);
 

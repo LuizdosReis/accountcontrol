@@ -1,9 +1,11 @@
 package br.com.accountcontrol.category;
 
 import br.com.accountcontrol.category.builder.CategoryBuilder;
+import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,20 +25,23 @@ public class CategoryServiceIT {
     @Autowired
     private CategoryRepository repository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     private CategoryService service;
 
     @Before
     public void setUp(){
-        service = new CategoryServiceImpl(repository);
+        service = new CategoryServiceImpl(repository,modelMapper);
     }
 
     @Test
     public void saveCategory(){
-        Category categorySaved = CategoryBuilder.buildCategoryWithoutId();
+        CategoryCreateDTO categorySaved = CategoryBuilder.CATEGORY_CREATE_DTO;
 
         Category category = service.save(categorySaved);
 
-        assertNotNull(categorySaved.getId());
+        assertNotNull(category.getId());
         assertEquals(categorySaved.getDescription(),category.getDescription());
         assertEquals(categorySaved.getType(),category.getType());
     }
@@ -44,7 +49,7 @@ public class CategoryServiceIT {
 
     @Test
     public void getAll(){
-        Category categorySaved = CategoryBuilder.buildCategoryWithoutId();
+        CategoryCreateDTO categorySaved = CategoryBuilder.CATEGORY_CREATE_DTO;
 
         service.save(categorySaved);
 
