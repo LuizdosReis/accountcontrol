@@ -2,6 +2,7 @@ package br.com.accountcontrol.category;
 
 import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
+import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,40 +32,55 @@ public class CategoryServiceIT {
     private CategoryService service;
 
     @Before
-    public void setUp(){
-        service = new CategoryServiceImpl(repository,modelMapper);
+    public void setUp() {
+        service = new CategoryServiceImpl(repository, modelMapper);
     }
 
     @Test
-    public void saveCategory(){
-        CategoryCreateDTO categorySaved = CategoryBuilder.CATEGORY_CREATE_DTO;
+    public void save() {
+        CategoryCreateDTO categoryCreated = CategoryBuilder.CATEGORY_CREATE_DTO;
 
-        Category category = service.save(categorySaved);
+        Category categorySaved = service.save(categoryCreated);
 
-        assertNotNull(category.getId());
-        assertEquals(categorySaved.getDescription(),category.getDescription());
-        assertEquals(categorySaved.getType(),category.getType());
+        assertNotNull(categorySaved.getId());
+        assertEquals(categoryCreated.getDescription(), categorySaved.getDescription());
+        assertEquals(categoryCreated.getType(), categorySaved.getType());
     }
 
 
     @Test
-    public void getAll(){
-        CategoryCreateDTO categorySaved = CategoryBuilder.CATEGORY_CREATE_DTO;
+    public void getAll() {
+        CategoryCreateDTO category = CategoryBuilder.CATEGORY_CREATE_DTO;
 
-        service.save(categorySaved);
+        service.save(category);
 
         PageRequest pageRequest = PageRequest.of(0, 20);
 
         Page<Category> categoriesPage = service.findAll(pageRequest);
-        assertEquals(1,categoriesPage.getTotalElements());
-        assertEquals(1,categoriesPage.getTotalPages());
-        assertEquals(1,categoriesPage.getContent().size());
+        assertEquals(1, categoriesPage.getTotalElements());
+        assertEquals(1, categoriesPage.getTotalPages());
+        assertEquals(1, categoriesPage.getContent().size());
 
 
-        Category category = categoriesPage.getContent().get(0);
-        assertThat(categorySaved.getType(),is(category.getType()));
-        assertNotNull((category.getId()));
-        assertThat(categorySaved.getDescription(),is(category.getDescription()));
+        Category categorySaved = categoriesPage.getContent().get(0);
+        assertThat(categorySaved.getType(), is(category.getType()));
+        assertNotNull((categorySaved.getId()));
+        assertThat(categorySaved.getDescription(), is(category.getDescription()));
 
     }
+
+    @Test
+    public void update() {
+        CategoryCreateDTO category = CategoryBuilder.CATEGORY_CREATE_DTO;
+
+        Category categorySaved = service.save(category);
+        CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
+        categoryUpdate.setId(categorySaved.getId());
+        categoryUpdate.setDescription("update Description");
+
+        Category categoryUpdated = service.update(categoryUpdate);
+
+        assertThat(categoryUpdated.getDescription(), is(categoryUpdate.getDescription()));
+    }
+
 }
