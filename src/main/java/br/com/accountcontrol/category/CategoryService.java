@@ -13,4 +13,6 @@ public interface CategoryService {
 
     Category update(CategoryUpdateDTO category);
 
+    Category findById(Long id);
+    
 }

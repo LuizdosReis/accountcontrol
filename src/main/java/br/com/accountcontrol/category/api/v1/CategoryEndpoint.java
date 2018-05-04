@@ -23,19 +23,24 @@ public class CategoryEndpoint {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Category save(@Valid @RequestBody CategoryCreateDTO category){
+    public Category save(@Valid @RequestBody CategoryCreateDTO category) {
         return service.save(category);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<Category> getAll(Pageable pageable){
+    public Page<Category> getAll(Pageable pageable) {
         return service.findAll(pageable);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Category update(@Valid @RequestBody CategoryUpdateDTO category){
+    public Category update(@Valid @RequestBody CategoryUpdateDTO category) {
         return service.update(category);
+    }
+
+    @GetMapping(path = {"/{id}"})
+    public Category findById(@PathVariable("id") Long id) {
+        return service.findById(id);
     }
 }
