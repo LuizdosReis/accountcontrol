@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
+    public static final String CATEGORY_NOT_FOUND = "Category not found";
     private final CategoryRepository repository;
 
     private final ModelMapper modelMapper;
@@ -34,13 +35,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category update(CategoryUpdateDTO category) {
         log.debug("update category");
+
+        checkIfAccountExists(category.getId());
+
         return repository.save(modelMapper.map(category, Category.class));
     }
 
     @Override
     public Category findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+    }
+
+    private void checkIfAccountExists(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
+        }
     }
 
 }

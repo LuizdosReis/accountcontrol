@@ -3,8 +3,11 @@ package br.com.accountcontrol.category;
 import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
+import br.com.accountcontrol.exception.ResourceNotFoundException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -17,9 +20,12 @@ import java.util.Collections;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CategoryServiceTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     private CategoryRepository repository;
@@ -75,11 +81,26 @@ public class CategoryServiceTest {
         CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
         Category category = CategoryBuilder.CATEGORY;
 
-        when(service.update(categoryUpdate)).thenReturn(category);
+        when(repository.existsById(categoryUpdate.getId())).thenReturn(true);
+        when(repository.save(category)).thenReturn(category);
 
         Category categoryUpdated = service.update(categoryUpdate);
 
         assertEquals(categoryUpdate.getId(), categoryUpdated.getId());
         assertEquals(categoryUpdate.getDescription(), categoryUpdated.getDescription());
+        verify(repository, times(1)).existsById(categoryUpdate.getId());
+    }
+
+    @Test
+    public void updateWithCategoryNotExistentShouldReturnResourceNotFoundException() {
+        thrown.expect(ResourceNotFoundException.class);
+
+        CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
+
+        when(repository.existsById(categoryUpdate.getId()))
+                .thenThrow(new ResourceNotFoundException(CategoryServiceImpl.CATEGORY_NOT_FOUND));
+
+        service.update(categoryUpdate);
+        verify(repository, times(1)).existsById(categoryUpdate.getId());
     }
 }

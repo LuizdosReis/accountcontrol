@@ -3,8 +3,11 @@ package br.com.accountcontrol.category;
 import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
+import br.com.accountcontrol.exception.ResourceNotFoundException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +26,12 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @AutoConfigureTestDatabase(replace = NONE)
 public class CategoryServiceIT {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Autowired
     private CategoryRepository repository;
-
     @Autowired
     private ModelMapper modelMapper;
-
     private CategoryService service;
 
     @Before
@@ -81,6 +84,16 @@ public class CategoryServiceIT {
         Category categoryUpdated = service.update(categoryUpdate);
 
         assertThat(categoryUpdated.getDescription(), is(categoryUpdate.getDescription()));
+    }
+
+
+    @Test
+    public void updateWithCategoryNotExistentShouldReturnResourceNotFoundException() {
+        thrown.expect(ResourceNotFoundException.class);
+
+        CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
+
+        service.update(categoryUpdate);
     }
 
 }
