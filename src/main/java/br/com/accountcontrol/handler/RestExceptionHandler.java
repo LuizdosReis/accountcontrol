@@ -2,7 +2,9 @@ package br.com.accountcontrol.handler;
 
 import br.com.accountcontrol.erro.FieldError;
 import br.com.accountcontrol.erro.GlobalError;
+import br.com.accountcontrol.erro.ResourceNotFoundDetails;
 import br.com.accountcontrol.erro.ValidationErrorDetails;
+import br.com.accountcontrol.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -59,4 +63,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        log.error(ex.getMessage());
+
+        ResourceNotFoundDetails resourceNotFound = ResourceNotFoundDetails.builder()
+                .date(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .title("Resource not found")
+                .detail(ex.getMessage())
+                .developerMessage(ex.getClass().getName())
+                .build();
+
+        return new ResponseEntity<>(resourceNotFound, HttpStatus.NOT_FOUND);
+    }
 }

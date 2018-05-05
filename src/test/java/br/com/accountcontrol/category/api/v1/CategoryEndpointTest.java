@@ -6,6 +6,7 @@ import br.com.accountcontrol.category.CategoryService;
 import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
+import br.com.accountcontrol.exception.ResourceNotFoundException;
 import br.com.accountcontrol.handler.RestExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +83,8 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title", equalTo("Field Validation Errors")))
                 .andExpect(jsonPath("$.detail", equalTo("Field Validation Errors")))
-                .andExpect(jsonPath("$.developerMessage", equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
+                .andExpect(jsonPath("$.developerMessage",
+                        equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
                 .andExpect(jsonPath("$.date", notNullValue()))
                 .andExpect(jsonPath("$.fieldErrors", hasSize(2)))
                 .andExpect(jsonPath("$.fieldErrors[*].field", containsInAnyOrder(
@@ -128,5 +130,34 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
                 .andExpect(jsonPath("$.id", is(category.getId().intValue())))
                 .andExpect(jsonPath("$.description", is("Car")))
                 .andExpect(jsonPath("$.type", is("OUT")));
+    }
+
+    @Test
+    public void findByIdCategoryShouldReturnStatusCodeOk() throws Exception {
+
+        Category category = CategoryBuilder.CATEGORY;
+
+        when(service.findById(category.getId())).thenReturn(category);
+
+        mockMvc.perform(get(CategoryEndpoint.BASE_URL + "/" + category.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(category.getId().intValue())))
+                .andExpect(jsonPath("$.description", is("Car")))
+                .andExpect(jsonPath("$.type", is("OUT")));
+    }
+
+    @Test
+    public void findByIdCategoryShouldReturnStatusCodeNotFound() throws Exception {
+
+        when(service.findById(1L)).thenThrow(new ResourceNotFoundException("Category Not Found"));
+
+        mockMvc.perform(get(CategoryEndpoint.BASE_URL + "/1"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.date").exists())
+                .andExpect(jsonPath("$.title").value("Resource not found"))
+                .andExpect(jsonPath("$.detail").value("Category Not Found"))
+                .andExpect(jsonPath("$.developerMessage").value("br.com.accountcontrol.exception.ResourceNotFoundException"));
     }
 }
