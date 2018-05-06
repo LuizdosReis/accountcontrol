@@ -133,6 +133,27 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
     }
 
     @Test
+    public void updateInvalidCategoryShouldReturnStatusCodeBadRequest() throws Exception {
+        mockMvc.perform(put(CategoryEndpoint.BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(CategoryUpdateDTO.builder().build()))
+        )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title", equalTo("Field Validation Errors")))
+                .andExpect(jsonPath("$.detail", equalTo("Field Validation Errors")))
+                .andExpect(jsonPath("$.developerMessage",
+                        equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
+                .andExpect(jsonPath("$.date", notNullValue()))
+                .andExpect(jsonPath("$.fieldErrors", hasSize(2)))
+                .andExpect(jsonPath("$.fieldErrors[*].field", containsInAnyOrder(
+                        "description", "id")))
+                .andExpect(jsonPath("$.fieldErrors[*].message", containsInAnyOrder(
+                        "The description not be empty", "the id not be empty")))
+                .andExpect(jsonPath("$.fieldErrors[*].code", containsInAnyOrder(
+                        "NotEmpty", "NotNull")));
+    }
+
     public void findByIdCategoryShouldReturnStatusCodeOk() throws Exception {
 
         Category category = CategoryBuilder.CATEGORY;
