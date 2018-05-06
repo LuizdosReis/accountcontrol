@@ -96,4 +96,25 @@ public class CategoryServiceIT {
         service.update(categoryUpdate);
     }
 
+    @Test
+    public void findById() {
+        CategoryCreateDTO category = CategoryBuilder.CATEGORY_CREATE_DTO;
+
+        Category categorySaved = service.save(category);
+
+        Category categoryReturned = service.findById(categorySaved.getId());
+
+        assertEquals(categorySaved.getId(), categoryReturned.getId());
+        assertEquals(category.getDescription(), categoryReturned.getDescription());
+        assertEquals(category.getType(), categoryReturned.getType());
+    }
+
+    @Test
+    public void findByIdNotExistentShouldReturnResourceNotFoundException() {
+        thrown.expect(ResourceNotFoundException.class);
+        Long id = 1L;
+
+        service.findById(id);
+    }
+
 }

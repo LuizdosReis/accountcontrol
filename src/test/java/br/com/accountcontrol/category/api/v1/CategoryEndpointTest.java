@@ -154,6 +154,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
                         "NotEmpty", "NotNull")));
     }
 
+    @Test
     public void findByIdCategoryShouldReturnStatusCodeOk() throws Exception {
 
         Category category = CategoryBuilder.CATEGORY;
@@ -179,6 +180,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
                 .andExpect(jsonPath("$.date").exists())
                 .andExpect(jsonPath("$.title").value("Resource not found"))
                 .andExpect(jsonPath("$.detail").value("Category Not Found"))
-                .andExpect(jsonPath("$.developerMessage").value("br.com.accountcontrol.exception.ResourceNotFoundException"));
+                .andExpect(jsonPath("$.developerMessage")
+                        .value("br.com.accountcontrol.exception.ResourceNotFoundException"));
     }
 }

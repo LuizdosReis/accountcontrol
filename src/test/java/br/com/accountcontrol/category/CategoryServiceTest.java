@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -102,5 +103,28 @@ public class CategoryServiceTest {
 
         service.update(categoryUpdate);
         verify(repository, times(1)).existsById(categoryUpdate.getId());
+    }
+
+    @Test
+    public void findById() {
+        Category category = CategoryBuilder.CATEGORY;
+
+        when(repository.findById(category.getId())).thenReturn(Optional.of(category));
+
+        Category categoryReturned = service.findById(category.getId());
+        assertEquals(category.getId(), categoryReturned.getId());
+        assertEquals(category.getDescription(), categoryReturned.getDescription());
+        assertEquals(category.getType(), categoryReturned.getType());
+    }
+
+    @Test
+    public void findByIdNotExistentShouldReturnResourceNotFoundException() {
+        thrown.expect(ResourceNotFoundException.class);
+        Long id = 1L;
+
+        when(repository.findById(id))
+                .thenThrow(new ResourceNotFoundException(CategoryServiceImpl.CATEGORY_NOT_FOUND));
+
+        service.findById(id);
     }
 }
