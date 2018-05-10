@@ -1,10 +1,10 @@
 package br.com.accountcontrol.category;
 
+import br.com.accountcontrol.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Entity
 @EqualsAndHashCode(of = "id")
 @Data
-public class Category implements Serializable{
+public class Category implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +25,9 @@ public class Category implements Serializable{
 
     @Enumerated(value = EnumType.STRING)
     private Type type;
+
+    @JsonIgnore
+    @ManyToOne
+    private User user;
 
 }
