@@ -3,6 +3,7 @@ package br.com.accountcontrol.category;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
+import br.com.accountcontrol.user.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -17,13 +18,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     public static final String CATEGORY_NOT_FOUND = "Category not found";
     private final CategoryRepository repository;
+    private final UserService userService;
 
     private final ModelMapper modelMapper;
 
     @Override
-    public Category save(CategoryCreateDTO category) {
+    public Category save(CategoryCreateDTO dto) {
         log.debug("saving category");
-        return repository.save(modelMapper.map(category, Category.class));
+
+        Category category = modelMapper.map(dto, Category.class);
+        category.setUser(userService.getCurrentUser());
+
+        return repository.save(category);
     }
 
     @Override

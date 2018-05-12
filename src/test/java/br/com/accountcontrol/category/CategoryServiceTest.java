@@ -4,6 +4,7 @@ import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
+import br.com.accountcontrol.user.service.UserService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,13 +32,16 @@ public class CategoryServiceTest {
     @Mock
     private CategoryRepository repository;
 
+    @Mock
+    private UserService userService;
+
     private CategoryService service;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        service = new CategoryServiceImpl(repository, new ModelMapper());
+        service = new CategoryServiceImpl(repository, userService, new ModelMapper());
     }
 
     @Test

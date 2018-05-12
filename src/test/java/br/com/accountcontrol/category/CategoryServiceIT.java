@@ -4,6 +4,7 @@ import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
+import br.com.accountcontrol.user.service.UserService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,11 +33,13 @@ public class CategoryServiceIT {
     private CategoryRepository repository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private UserService userService;
     private CategoryService service;
 
     @Before
     public void setUp() {
-        service = new CategoryServiceImpl(repository, modelMapper);
+        service = new CategoryServiceImpl(repository, userService, modelMapper);
     }
 
     @Test
