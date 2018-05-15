@@ -29,13 +29,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader(SecurityConstants.HEADER_STRING);
 
-        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            chain.doFilter(request, response);
-            return;
+        if (header != null && header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(request);
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         chain.doFilter(request, response);
     }
 
