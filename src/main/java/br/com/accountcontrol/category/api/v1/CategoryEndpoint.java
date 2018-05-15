@@ -40,6 +40,7 @@ public class CategoryEndpoint {
     }
 
     @GetMapping(path = {"/{id}"})
+    @ResponseStatus(HttpStatus.OK)
     public Category findById(@PathVariable("id") Long id) {
         return service.findById(id);
     }

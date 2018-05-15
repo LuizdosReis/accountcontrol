@@ -35,28 +35,24 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Page<Category> findAll(Pageable pageable) {
         log.debug("get all categories");
-        return repository.findAll(pageable);
+        return repository.findAllByUser(userService.getCurrentUser(), pageable);
     }
 
     @Override
-    public Category update(CategoryUpdateDTO category) {
+    public Category update(CategoryUpdateDTO dto) {
         log.debug("update category");
 
-        checkIfAccountExists(category.getId());
+        Category category = repository.findByIdAndUser(dto.getId(), userService.getCurrentUser())
+                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        category.setDescription(dto.getDescription());
 
-        return repository.save(modelMapper.map(category, Category.class));
+        return repository.save(category);
     }
 
     @Override
     public Category findById(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndUser(id, userService.getCurrentUser())
                 .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-    }
-
-    private void checkIfAccountExists(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
-        }
     }
 
 }
