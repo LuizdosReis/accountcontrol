@@ -4,6 +4,8 @@ import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
+import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.user.builder.UserBuilder;
 import br.com.accountcontrol.user.service.UserService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,6 +52,12 @@ public class CategoryServiceTest {
         Category categorySaved = CategoryBuilder.CATEGORY_WITHOUT_ID;
         CategoryCreateDTO categoryCreate = CategoryBuilder.CATEGORY_CREATE_DTO;
 
+        User user = User.builder().username("USER").build();
+
+        categorySaved.setUser(user);
+        categoryReturned.setUser(user);
+
+        when(userService.getCurrentUser()).thenReturn(user);
         when(repository.save(categorySaved)).thenReturn(categoryReturned);
 
         Category category = service.save(categoryCreate);
@@ -57,15 +65,18 @@ public class CategoryServiceTest {
         assertEquals(categoryReturned.getId(), category.getId());
         assertEquals(categoryReturned.getDescription(), category.getDescription());
         assertEquals(categoryReturned.getType(), category.getType());
+        assertEquals(categoryReturned.getUser(), user);
     }
 
     @Test
     public void getAll() {
         Category categoryReturned = CategoryBuilder.CATEGORY;
+        User user = UserBuilder.USER;
 
         PageRequest pageRequest = PageRequest.of(0, 20);
 
-        when(repository.findAll(pageRequest))
+        when(userService.getCurrentUser()).thenReturn(user);
+        when(repository.findAllByUser(user, pageRequest))
                 .thenReturn(new PageImpl<>(Collections.singletonList(categoryReturned)));
 
         Page<Category> categoriesPage = service.findAll(pageRequest);
@@ -78,22 +89,26 @@ public class CategoryServiceTest {
         assertThat(categoryReturned.getType(), is(category.getType()));
         assertThat(categoryReturned.getId(), is(category.getId()));
         assertThat(categoryReturned.getDescription(), is(category.getDescription()));
-
+        assertThat(categoryReturned.getUser(), is(category.getUser()));
     }
 
     @Test
     public void update() {
         CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
         Category category = CategoryBuilder.CATEGORY;
+        User user = UserBuilder.USER;
 
-        when(repository.existsById(categoryUpdate.getId())).thenReturn(true);
+        when(userService.getCurrentUser()).thenReturn(user);
+        when(repository.findByIdAndUser(categoryUpdate.getId(), user)).thenReturn(Optional.of(category));
         when(repository.save(category)).thenReturn(category);
 
         Category categoryUpdated = service.update(categoryUpdate);
 
         assertEquals(categoryUpdate.getId(), categoryUpdated.getId());
         assertEquals(categoryUpdate.getDescription(), categoryUpdated.getDescription());
-        verify(repository, times(1)).existsById(categoryUpdate.getId());
+        verify(userService, times(1)).getCurrentUser();
+        verify(repository, times(1)).findByIdAndUser(categoryUpdate.getId(), user);
+        verify(repository, times(1)).save(category);
     }
 
     @Test
@@ -112,8 +127,10 @@ public class CategoryServiceTest {
     @Test
     public void findById() {
         Category category = CategoryBuilder.CATEGORY;
+        User user = UserBuilder.USER;
 
-        when(repository.findById(category.getId())).thenReturn(Optional.of(category));
+        when(userService.getCurrentUser()).thenReturn(user);
+        when(repository.findByIdAndUser(category.getId(), user)).thenReturn(Optional.of(category));
 
         Category categoryReturned = service.findById(category.getId());
         assertEquals(category.getId(), categoryReturned.getId());

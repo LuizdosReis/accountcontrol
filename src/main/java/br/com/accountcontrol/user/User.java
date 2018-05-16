@@ -2,6 +2,7 @@ package br.com.accountcontrol.user;
 
 import br.com.accountcontrol.category.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Builder
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "users")
 public class User implements UserDetails {
