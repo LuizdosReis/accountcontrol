@@ -1,6 +1,6 @@
 package br.com.accountcontrol.security;
 
-import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.user.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

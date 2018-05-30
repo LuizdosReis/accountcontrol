@@ -1,4 +1,4 @@
-package br.com.accountcontrol.user;
+package br.com.accountcontrol.user.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

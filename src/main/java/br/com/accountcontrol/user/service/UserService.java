@@ -1,6 +1,6 @@
 package br.com.accountcontrol.user.service;
 
-import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.user.model.User;
 import br.com.accountcontrol.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;

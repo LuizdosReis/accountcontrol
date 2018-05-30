@@ -1,6 +1,6 @@
-package br.com.accountcontrol.category;
+package br.com.accountcontrol.category.model;
 
-import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.user.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

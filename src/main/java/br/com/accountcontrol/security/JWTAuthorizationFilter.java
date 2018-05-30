@@ -1,6 +1,6 @@
 package br.com.accountcontrol.security;
 
-import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.user.model.User;
 import br.com.accountcontrol.user.service.UserService;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/controle_orcamento
-    username: user_controle
-    password: controle
+    url: jdbc:postgresql://localhost:5432/account_db
+    username: user_account
+    password: account
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect

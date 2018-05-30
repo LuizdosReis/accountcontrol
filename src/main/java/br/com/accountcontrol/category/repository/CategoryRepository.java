@@ -1,6 +1,7 @@
-package br.com.accountcontrol.category;
+package br.com.accountcontrol.category.repository;
 
-import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.category.model.Category;
+import br.com.accountcontrol.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;

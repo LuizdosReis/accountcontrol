@@ -1,6 +1,6 @@
 package br.com.accountcontrol.user.api.v1;
 
-import br.com.accountcontrol.user.User;
+import br.com.accountcontrol.user.model.User;
 import br.com.accountcontrol.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

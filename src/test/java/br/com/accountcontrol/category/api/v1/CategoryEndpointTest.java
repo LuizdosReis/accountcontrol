@@ -1,11 +1,11 @@
 package br.com.accountcontrol.category.api.v1;
 
 import br.com.accountcontrol.api.AbstractRestControllerTest;
-import br.com.accountcontrol.category.Category;
-import br.com.accountcontrol.category.CategoryService;
 import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
+import br.com.accountcontrol.category.dto.CategoryReturnDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
+import br.com.accountcontrol.category.service.CategoryService;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,17 +47,16 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
 
     @Before
     public void setUp() {
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(this.context)
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
-
     }
 
     @Test
     public void saveCategoryShouldReturnStatusCodeCreated() throws Exception {
         CategoryCreateDTO categoryCreate = CategoryBuilder.CATEGORY_CREATE_DTO;
-        Category categoryReturned = CategoryBuilder.CATEGORY;
+        CategoryReturnDTO categoryReturned = CategoryBuilder.CATEGORY_RETURN_DTO;
 
         when(service.save(categoryCreate)).thenReturn(categoryReturned);
 
@@ -97,7 +96,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
     @Test
     public void findAllCategoryShouldReturnStatusCodeOk() throws Exception {
 
-        Category categoryReturned = CategoryBuilder.CATEGORY;
+        CategoryReturnDTO categoryReturned = CategoryBuilder.CATEGORY_RETURN_DTO;
 
         when(service.findAll(PageRequest.of(0, 20)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(categoryReturned)));
@@ -116,7 +115,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
     public void updateCategoryShouldReturnStatusCodeOk() throws Exception {
 
         CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
-        Category category = CategoryBuilder.CATEGORY;
+        CategoryReturnDTO category = CategoryBuilder.CATEGORY_RETURN_DTO;
 
         when(service.update(categoryUpdate)).thenReturn(category);
 
@@ -156,7 +155,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
     @Test
     public void findByIdCategoryShouldReturnStatusCodeOk() throws Exception {
 
-        Category category = CategoryBuilder.CATEGORY;
+        CategoryReturnDTO category = CategoryBuilder.CATEGORY_RETURN_DTO;
 
         when(service.findById(category.getId())).thenReturn(category);
 

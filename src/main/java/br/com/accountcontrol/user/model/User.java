@@ -1,6 +1,7 @@
-package br.com.accountcontrol.user;
+package br.com.accountcontrol.user.model;
 
-import br.com.accountcontrol.category.Category;
+import br.com.accountcontrol.category.model.Category;
+import br.com.accountcontrol.user.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;

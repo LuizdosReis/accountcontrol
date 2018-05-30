@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/controle_orcamento_test
-    username: user_controle_test
-    password: controle_test
+    url: jdbc:postgresql://localhost:5432/account_db_test
+    username: user_account
+    password: account
 
   jpa:
     properties:

@@ -1,17 +1,21 @@
-package br.com.accountcontrol.category;
+package br.com.accountcontrol.category.service;
 
 import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
+import br.com.accountcontrol.category.dto.CategoryReturnDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
+import br.com.accountcontrol.category.model.Category;
+import br.com.accountcontrol.category.repository.CategoryRepository;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
-import br.com.accountcontrol.user.User;
 import br.com.accountcontrol.user.builder.UserBuilder;
+import br.com.accountcontrol.user.model.User;
 import br.com.accountcontrol.user.service.UserService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -49,23 +53,15 @@ public class CategoryServiceTest {
     @Test
     public void save() {
         Category categoryReturned = CategoryBuilder.CATEGORY;
-        Category categorySaved = CategoryBuilder.CATEGORY_WITHOUT_ID;
         CategoryCreateDTO categoryCreate = CategoryBuilder.CATEGORY_CREATE_DTO;
 
-        User user = User.builder().username("USER").build();
+        when(repository.save(Mockito.any(Category.class))).thenReturn(categoryReturned);
 
-        categorySaved.setUser(user);
-        categoryReturned.setUser(user);
-
-        when(userService.getCurrentUser()).thenReturn(user);
-        when(repository.save(categorySaved)).thenReturn(categoryReturned);
-
-        Category category = service.save(categoryCreate);
+        CategoryReturnDTO category = service.save(categoryCreate);
 
         assertEquals(categoryReturned.getId(), category.getId());
         assertEquals(categoryReturned.getDescription(), category.getDescription());
         assertEquals(categoryReturned.getType(), category.getType());
-        assertEquals(categoryReturned.getUser(), user);
     }
 
     @Test
@@ -79,17 +75,16 @@ public class CategoryServiceTest {
         when(repository.findAllByUser(user, pageRequest))
                 .thenReturn(new PageImpl<>(Collections.singletonList(categoryReturned)));
 
-        Page<Category> categoriesPage = service.findAll(pageRequest);
+        Page<CategoryReturnDTO> categoriesPage = service.findAll(pageRequest);
         assertEquals(1, categoriesPage.getTotalElements());
         assertEquals(1, categoriesPage.getTotalPages());
         assertEquals(1, categoriesPage.getContent().size());
 
 
-        Category category = categoriesPage.getContent().get(0);
+        CategoryReturnDTO category = categoriesPage.getContent().get(0);
         assertThat(categoryReturned.getType(), is(category.getType()));
         assertThat(categoryReturned.getId(), is(category.getId()));
         assertThat(categoryReturned.getDescription(), is(category.getDescription()));
-        assertThat(categoryReturned.getUser(), is(category.getUser()));
     }
 
     @Test
@@ -102,7 +97,7 @@ public class CategoryServiceTest {
         when(repository.findByIdAndUser(categoryUpdate.getId(), user)).thenReturn(Optional.of(category));
         when(repository.save(category)).thenReturn(category);
 
-        Category categoryUpdated = service.update(categoryUpdate);
+        CategoryReturnDTO categoryUpdated = service.update(categoryUpdate);
 
         assertEquals(categoryUpdate.getId(), categoryUpdated.getId());
         assertEquals(categoryUpdate.getDescription(), categoryUpdated.getDescription());
@@ -132,7 +127,7 @@ public class CategoryServiceTest {
         when(userService.getCurrentUser()).thenReturn(user);
         when(repository.findByIdAndUser(category.getId(), user)).thenReturn(Optional.of(category));
 
-        Category categoryReturned = service.findById(category.getId());
+        CategoryReturnDTO categoryReturned = service.findById(category.getId());
         assertEquals(category.getId(), categoryReturned.getId());
         assertEquals(category.getDescription(), categoryReturned.getDescription());
         assertEquals(category.getType(), categoryReturned.getType());
