@@ -4,6 +4,7 @@ import br.com.accountcontrol.category.builder.CategoryBuilder;
 import br.com.accountcontrol.category.dto.CategoryCreateDTO;
 import br.com.accountcontrol.category.dto.CategoryReturnDTO;
 import br.com.accountcontrol.category.dto.CategoryUpdateDTO;
+import br.com.accountcontrol.category.mapper.CategoryMapper;
 import br.com.accountcontrol.category.model.Category;
 import br.com.accountcontrol.category.repository.CategoryRepository;
 import br.com.accountcontrol.exception.ResourceNotFoundException;
@@ -17,7 +18,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -47,7 +47,7 @@ public class CategoryServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        service = new CategoryServiceImpl(repository, userService, new ModelMapper());
+        service = new CategoryServiceImpl(repository, userService, CategoryMapper.INSTANCE);
     }
 
     @Test
