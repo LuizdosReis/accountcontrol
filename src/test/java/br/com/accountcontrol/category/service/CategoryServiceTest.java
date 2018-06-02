@@ -11,6 +11,7 @@ import br.com.accountcontrol.exception.ResourceNotFoundException;
 import br.com.accountcontrol.user.builder.UserBuilder;
 import br.com.accountcontrol.user.model.User;
 import br.com.accountcontrol.user.service.UserService;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,12 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Collections;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class CategoryServiceTest {
@@ -66,25 +64,18 @@ public class CategoryServiceTest {
 
     @Test
     public void getAll() {
-        Category categoryReturned = CategoryBuilder.CATEGORY;
         User user = UserBuilder.USER;
 
         PageRequest pageRequest = PageRequest.of(0, 20);
 
         when(userService.getCurrentUser()).thenReturn(user);
         when(repository.findAllByUser(user, pageRequest))
-                .thenReturn(new PageImpl<>(Collections.singletonList(categoryReturned)));
+                .thenReturn(new PageImpl<>(Lists.newArrayList(new Category(), new Category(), new Category())));
 
         Page<CategoryReturnDTO> categoriesPage = service.findAll(pageRequest);
-        assertEquals(1, categoriesPage.getTotalElements());
+        assertEquals(3, categoriesPage.getTotalElements());
         assertEquals(1, categoriesPage.getTotalPages());
-        assertEquals(1, categoriesPage.getContent().size());
-
-
-        CategoryReturnDTO category = categoriesPage.getContent().get(0);
-        assertThat(categoryReturned.getType(), is(category.getType()));
-        assertThat(categoryReturned.getId(), is(category.getId()));
-        assertThat(categoryReturned.getDescription(), is(category.getDescription()));
+        assertEquals(3, categoriesPage.getContent().size());
     }
 
     @Test
