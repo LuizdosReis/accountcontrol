@@ -1,11 +1,8 @@
 package br.com.accountcontrol.user.model;
 
 import br.com.accountcontrol.category.model.Category;
-import br.com.accountcontrol.user.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,6 +14,8 @@ import java.util.Set;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "users")
 public class User implements UserDetails {
