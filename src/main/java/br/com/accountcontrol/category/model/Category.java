@@ -1,7 +1,6 @@
 package br.com.accountcontrol.category.model;
 
 import br.com.accountcontrol.user.model.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@EqualsAndHashCode(of = "id")
 @Data
 public class Category implements Serializable {
 
@@ -26,7 +24,6 @@ public class Category implements Serializable {
     @Enumerated(value = EnumType.STRING)
     private Type type;
 
-    @JsonIgnore
     @ManyToOne
     private User user;
 
