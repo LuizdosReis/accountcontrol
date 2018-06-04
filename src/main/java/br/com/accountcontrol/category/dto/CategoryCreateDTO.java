@@ -1,9 +1,12 @@
 package br.com.accountcontrol.category.dto;
 
 import br.com.accountcontrol.category.model.Type;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Builder
@@ -12,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CategoryCreateDTO {
 
-    @NotEmpty(message = "The description not be empty")
+    @NotBlank(message = "The description not be empty")
     private String description;
 
     @NotNull(message = "The Type not be empty")

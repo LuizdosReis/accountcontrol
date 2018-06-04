@@ -92,7 +92,7 @@ public class CategoryEndpointTest extends AbstractRestControllerTest {
                 .andExpect(jsonPath("$.fieldErrors[*].message", containsInAnyOrder(
                         "The description not be empty", "The Type not be empty")))
                 .andExpect(jsonPath("$.fieldErrors[*].code", containsInAnyOrder(
-                        "NotEmpty", "NotNull")));
+                        "NotBlank", "NotNull")));
     }
 
     @Test
