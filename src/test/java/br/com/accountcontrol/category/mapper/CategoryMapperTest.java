@@ -26,7 +26,7 @@ public class CategoryMapperTest {
     public void shouldMapCategoryToCategoryReturnDto() {
         Category category = CategoryBuilder.CATEGORY;
 
-        CategoryReturnDTO categoryReturnDTO = categoryMapper.CategoryToCategoryReturnDTO(category);
+        CategoryReturnDTO categoryReturnDTO = categoryMapper.categoryToCategoryReturnDTO(category);
 
         assertEquals(category.getId(), categoryReturnDTO.getId());
         assertEquals(category.getDescription(), categoryReturnDTO.getDescription());

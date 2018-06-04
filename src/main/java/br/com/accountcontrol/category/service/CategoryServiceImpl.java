@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryMapper.categoryCreateDTOToCategory(dto);
         category.setUser(userService.getCurrentUser());
 
-        return categoryMapper.CategoryToCategoryReturnDTO(repository.save(category));
+        return categoryMapper.categoryToCategoryReturnDTO(repository.save(category));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<CategoryReturnDTO> categoriesReturns = Lists.newArrayList();
 
-        categoriesPage.stream().forEach(c -> categoriesReturns.add(categoryMapper.CategoryToCategoryReturnDTO(c)));
+        categoriesPage.stream().forEach(c -> categoriesReturns.add(categoryMapper.categoryToCategoryReturnDTO(c)));
 
         return new PageImpl<>(categoriesReturns, pageable, categoriesPage.getTotalElements());
     }
@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         category.setDescription(dto.getDescription());
 
-        return categoryMapper.CategoryToCategoryReturnDTO(repository.save(category));
+        return categoryMapper.categoryToCategoryReturnDTO(repository.save(category));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = repository.findByIdAndUser(id, userService.getCurrentUser())
                 .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
-        return categoryMapper.CategoryToCategoryReturnDTO(category);
+        return categoryMapper.categoryToCategoryReturnDTO(category);
     }
 
 }
