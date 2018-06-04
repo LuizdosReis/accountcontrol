@@ -1,7 +1,7 @@
 package br.com.accountcontrol.user.model;
 
+import br.com.accountcontrol.account.model.Account;
 import br.com.accountcontrol.category.model.Category;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,9 +37,11 @@ public class User implements UserDetails {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Category> categories;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Account> accounts;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
