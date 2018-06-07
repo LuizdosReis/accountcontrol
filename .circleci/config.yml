@@ -52,10 +52,7 @@ jobs:
       # run tests!
       - run: mvn integration-test
 
-      - run: mvn sonar:sonar \
-               -Dsonar.organization=luizdosreis-github \
-               -Dsonar.host.url=https://sonarcloud.io \
-               -Dsonar.login=$SONAR_LOGIN
+      - run: mvn sonar:sonar -Dsonar.organization=luizdosreis-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
   deploy:
 
     docker:
