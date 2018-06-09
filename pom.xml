@@ -25,6 +25,7 @@
         <java.version>1.8</java.version>
         <spring-test-dbunit-version>1.3.0</spring-test-dbunit-version>
         <dbunit-version>2.5.4</dbunit-version>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.junit.reportPaths>target/surefire-reports,target/failsafe-reports</sonar.junit.reportPaths>
     </properties>
 
@@ -137,6 +138,12 @@
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.4.0.905</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.1</version>
             </plugin>
 
             <plugin>
