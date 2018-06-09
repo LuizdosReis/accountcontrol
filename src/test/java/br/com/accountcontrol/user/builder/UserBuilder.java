@@ -4,5 +4,5 @@ import br.com.accountcontrol.user.model.User;
 
 public class UserBuilder {
 
-    public static User USER = User.builder().username("username").name("username").password("123").build();
+    public static User USER = User.builder().username("luiz.reis").name("luiz").password("123").build();
 }
