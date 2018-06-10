@@ -19,7 +19,7 @@ public class AccountCreateDTO {
     @NotBlank(message = "The description not be empty")
     private String description;
 
-    @NotNull
+    @NotNull(message = "The balance not be empty")
     @Digits(fraction = 2, integer = 9)
     private BigDecimal balance;
 }

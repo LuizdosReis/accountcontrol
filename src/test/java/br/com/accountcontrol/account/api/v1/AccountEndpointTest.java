@@ -17,7 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,5 +66,27 @@ public class AccountEndpointTest extends AbstractRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.description", is(accountReturnDto.getDescription())))
                 .andExpect(jsonPath("$.balance").value("20"));
+    }
+
+    @Test
+    public void saveInvalidAccountShouldReturnStatusCodeBadRequest() throws Exception {
+        mockMvc.perform(post(AccountEndpoint.BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(AccountReturnDTO.builder().build()))
+        )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title", equalTo("Field Validation Errors")))
+                .andExpect(jsonPath("$.detail", equalTo("Field Validation Errors")))
+                .andExpect(jsonPath("$.developerMessage",
+                        equalTo("org.springframework.web.bind.MethodArgumentNotValidException")))
+                .andExpect(jsonPath("$.date", notNullValue()))
+                .andExpect(jsonPath("$.fieldErrors", hasSize(2)))
+                .andExpect(jsonPath("$.fieldErrors[*].field", containsInAnyOrder(
+                        "description", "balance")))
+                .andExpect(jsonPath("$.fieldErrors[*].message", containsInAnyOrder(
+                        "The description not be empty", "The balance not be empty")))
+                .andExpect(jsonPath("$.fieldErrors[*].code", containsInAnyOrder(
+                        "NotBlank", "NotNull")));
     }
 }
