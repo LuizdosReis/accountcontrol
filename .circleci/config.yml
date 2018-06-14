@@ -50,7 +50,7 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # run tests!
-      - run: mvn clean org.jacoco:jacoco-maven-plugin:0.8.1:prepare-agent integration-test
+      - run: mvn clean org.jacoco:jacoco-maven-plugin:0.8.1:prepare-agent integration-test -Dspring.profiles.active=test
 
       - run: mvn sonar:sonar -Dsonar.organization=luizdosreis-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
   deploy:
