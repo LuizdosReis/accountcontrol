@@ -16,9 +16,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CategoryServiceTest {
 
     @Rule
@@ -43,8 +45,6 @@ public class CategoryServiceTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         service = new CategoryServiceImpl(repository, userService, CategoryMapper.INSTANCE);
     }
 
@@ -103,9 +103,6 @@ public class CategoryServiceTest {
 
         CategoryUpdateDTO categoryUpdate = CategoryBuilder.CATEGORY_UPDATE_DTO;
 
-        when(repository.existsById(categoryUpdate.getId()))
-                .thenThrow(new ResourceNotFoundException(CategoryServiceImpl.CATEGORY_NOT_FOUND));
-
         service.update(categoryUpdate);
         verify(repository, times(1)).existsById(categoryUpdate.getId());
     }
@@ -129,9 +126,8 @@ public class CategoryServiceTest {
         thrown.expect(ResourceNotFoundException.class);
         Long id = 1L;
 
-        when(repository.findById(id))
-                .thenThrow(new ResourceNotFoundException(CategoryServiceImpl.CATEGORY_NOT_FOUND));
-
         service.findById(id);
     }
+
+
 }
