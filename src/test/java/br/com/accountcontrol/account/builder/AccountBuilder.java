@@ -2,6 +2,7 @@ package br.com.accountcontrol.account.builder;
 
 import br.com.accountcontrol.account.dto.AccountCreateDTO;
 import br.com.accountcontrol.account.dto.AccountReturnDTO;
+import br.com.accountcontrol.account.dto.AccountUpdateDto;
 import br.com.accountcontrol.account.model.Account;
 
 import java.math.BigDecimal;
@@ -25,5 +26,11 @@ public class AccountBuilder {
             .builder()
             .description("description")
             .balance(new BigDecimal("20"))
+            .build();
+
+    public static final AccountUpdateDto ACCOUNT_UPDATE_DTO = AccountUpdateDto
+            .builder()
+            .description("update description")
+            .id(1L)
             .build();
 }
